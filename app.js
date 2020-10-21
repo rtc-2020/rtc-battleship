@@ -24,8 +24,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 
 // send a message on successful socket connection
-socket.on('connection', function(){
-  socket.emit('message', 'Successfully connected.');
+// socket.on('connection', function(){
+//  socket.emit('message', 'Successfully connected.');
+// });
+
+// handle dynamically generated namespaces;
+// see https://socket.io/docs/namespaces/
+const namespaces = socket.of(/^\/[a-z]{3}-[a-z]{4}-[a-z]{3}$/);
+
+namespaces.on('connect', function(io) {
+  const namespace = io.nsp;
+  namespace.emit('message', `Connected to namespace: ${namespace.name}`);
 });
 
 // catch 404 and forward to error handler
