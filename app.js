@@ -28,6 +28,14 @@ socket.on('connection', function(){
   socket.emit('message', 'Successfully connected.');
 });
 
+const namespaces = socket.of(/^\/[a-z]{3}-[a-z]{4}-[a-z]{3}$/);
+
+namespaces.on('connection', function(io) {
+  const namespace = io.nsp;
+  namespace.emit('message', `Successfully connected on namespace: ${namespace.name}`);
+});
+
+
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
   next(createError(404));
