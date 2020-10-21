@@ -3,3 +3,9 @@ extends layout
 block content
   h1= title
   p Welcome to #{title}
+
+  script.
+      // quick and dirty global for handling the namespace
+      // this will save the need for inspecting and manipulating
+      // `window.location.pathname` or something similar
+      window.NAMESPACE = "#{namespace}";
