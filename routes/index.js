@@ -11,7 +11,13 @@ router.get('/', function(req, res, next) {
 });
 
 router.get('/:game([a-z]{3}-[a-z]{4}-[a-z]{3})', function(req, res, next) {
-  res.render('index', { title: `Game Room ${req.params["game"]}` });
+  // Potential TODO:
+  // Server-based logic could be called here, such as for:
+  //  - checking the existence of the room
+  //  - persisting the room's existence, once created
+  //  - handling user authorization
+  const namespace = req.params["game"];
+  res.render('index', { title: `Game Room ${namespace}`, namespace: namespace });
 });
 
 module.exports = router;
