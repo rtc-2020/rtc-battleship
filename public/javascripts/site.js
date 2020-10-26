@@ -65,7 +65,7 @@ function startCall() {
 sc.on('calling', function() {
   console.log('This is the receiving side of the connection...');
   callButton.innerText = "Answer Call";
-  callButton.id = "answer";
+  callButton.id = "answer-button";
   callButton.removeEventListener('click', startCall);
   callButton.addEventListener('click', function() {
     callButton.hidden = true;
