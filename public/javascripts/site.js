@@ -48,3 +48,27 @@ async function startStream() {
 pc.ontrack = function(track) {
   peerStream.addTrack(track.track);
 }
+
+// Call/answer button
+var callButton = document.querySelector('#call-button');
+callButton.addEventListener('click', startCall);
+
+function startCall() {
+  console.log('This is the calling side of the connection...');
+  callButton.hidden = true;
+  clientIs.polite = true;
+  sc.emit('calling');
+  startStream();
+}
+
+// Handle the 'calling' event on the receiving peer (the callee)
+sc.on('calling', function() {
+  console.log('This is the receiving side of the connection...');
+  callButton.innerText = "Answer Call";
+  callButton.id = "answer";
+  callButton.removeEventListener('click', startCall);
+  callButton.addEventListener('click', function() {
+    callButton.hidden = true;
+    startStream();
+  });
+});
