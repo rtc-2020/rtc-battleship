@@ -35,6 +35,18 @@ namespaces.on('connection', function(socket) {
   // listen and emit ONLY on the `socket` object
   const namespace = socket.nsp;
   socket.emit('message', `Successfully connected on namespace: ${namespace.name}`);
+  // Listen for a call and broadcast to the receiving client
+  socket.on('calling', function() {
+    socket.broadcast.emit('calling');
+  });
+  // Handle signaling events and their destructured object data
+  socket.on('signal', function({ description, candidate}) {
+    console.log(`Received a signal from ${socket.id}`);
+    console.log({description, candidate});
+    // We want to broadcast the received signal so that the sending
+    // side does not receive its own description or candidate
+    socket.broadcast.emit('signal', { description, candidate });
+  });
 });
 
 
