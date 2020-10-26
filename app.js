@@ -30,9 +30,24 @@ app.use('/', indexRouter);
 
 const namespaces = io.of(/^\/[a-z]{3}-[a-z]{4}-[a-z]{3}$/);
 
-io.on('connection', function(socket) {
+namespaces.on('connection', function(socket) {
+  console.log('A client connected...');
+  // Use the `namespace` var only for diagnostic purposes...
   const namespace = socket.nsp;
+  // ...and therefore use the namespaced socket, `io`, for
+  // emitting and listening for events.
   socket.emit('message', `Successfully connected on namespace: ${namespace.name}`);
+  // Broadcast a dataless 'calling' event from the caller to the callee
+  socket.on('calling', function() {
+    socket.broadcast.emit('calling');
+  });
+  // Handle all signalling events and their destructured data
+  socket.on('signal', function({description, candidate}) {
+    console.log(`Signal received from ${socket.id}:`);
+    console.log({description, candidate});
+    // Broadcast emit so client doesn't receive own description/candidate
+    socket.broadcast.emit('signal', {description, candidate});
+  });
 });
 
 
