@@ -27,3 +27,24 @@ selfVideo.srcObject = selfStream;
 var peerVideo = document.querySelector('#peer-video');
 var peerStream = new MediaStream();
 peerVideo.srcObject = peerStream;
+
+// Handle the start of media streaming
+async function startStream() {
+  try {
+    var stream = await navigator.mediaDevices.getUserMedia(media_constraints);
+    for (var track of stream.getTracks()) {
+      pc.addTrack(track);
+      // Future improvement (I think)
+      // selfStream.addTrack(track);
+    }
+    // TODO: Use the tracks here
+    selfVideo.srcObject = stream;
+  } catch(error) {
+    console.error(error);
+  }
+}
+
+// Listen for and attach any peer tracks
+pc.ontrack = function(track) {
+  peerStream.addTrack(track.track);
+}
