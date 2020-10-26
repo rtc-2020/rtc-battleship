@@ -1,9 +1,5 @@
-// var socket = io.connect('/');
-// socket.on('message', function(data) {
-// console.log('Message received: ' + data);
-// });
-
-var namespace = io.connect('/' + NAMESPACE);
-namespace.on('message', function(data) {
+// Use `sc` for the signaling channel...
+var sc = io.connect('/' + NAMESPACE);
+sc.on('message', function(data) {
   console.log('Message received: ' + data);
 });
