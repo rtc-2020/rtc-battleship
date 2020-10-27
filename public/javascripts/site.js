@@ -24,17 +24,53 @@ var pc = new RTCPeerConnection(rtc_config);
 // RTC Data Channel events
 // Data Channel placeholder
 var dc = null;
+
+// dc-backed chat DOM elements
+var chatBox = document.querySelector('aside.chat');
+var chatLog = document.querySelector('#chat-log');
+var chatForm = document.querySelector('#chat-form');
+var chatInput = document.querySelector('#message');
+var chatButton = document.querySelector('#send-button');
+
+function appendMsgToChatLog(log,msg,who) {
+  var li = document.createElement('li');
+  var msg = document.createTextNode(msg);
+  li.className = who;
+  li.appendChild(msg);
+  log.appendChild(li);
+  if (chatBox.scrollTo) {
+    chatBox.scrollTo({
+      top: chatBox.scrollHeight,
+      behavior: 'smooth'
+    });
+  } else {
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+}
+
 // Function to register event listeners
 function addDataChannelEventListeners(datachannel) {
   datachannel.onmessage = function(e) {
-    console.log('recieved: ' + e.data);
+    // console.log('received: ' + e.data);
+    appendMsgToChatLog(chatLog,e.data,'peer');
   };
   datachannel.onopen = function() {
-    console.log("Data channel 'text chat' open");
+    // console.log("Data channel 'text chat' open");
+    chatButton.disabled = false;
+    chatInput.disabled = false;
   };
   datachannel.onclose = function() {
-    console.log("Data channel 'text chat' closed");
+    // console.log("Data channel 'text chat' closed");
+    chatButton.disabled = true;
+    chatInput.disabled = true;
   };
+  chatForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var msg = chatInput.value;
+    appendMsgToChatLog(chatLog,msg,'self');
+    datachannel.send(msg);
+    chatInput.value = '';
+  });
 }
 // Polite peer will create the data channel...
 pc.onconnectionstatechange = function(e) {
