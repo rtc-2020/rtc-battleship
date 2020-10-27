@@ -20,5 +20,27 @@ block content
       figcaption
         button#call-button Start Call
 
+      aside.chat
+        ul#chat-log
+        
+        form(
+          id="chat-form"
+          action="#null"
+        )
+          input(
+            disabled="true"
+            id="message"
+            name="message"
+            type="text"
+            autocomplete="off"
+          )
+          button(
+            disabled="true"
+            id="send-button"
+            name="send-button"
+            type="submit"
+          ) Send
+
+
   script.
     window.NAMESPACE = "#{namespace}";
