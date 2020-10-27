@@ -21,6 +21,43 @@ var rtc_config = null;
 // Set up the RTCPeerConnection...it won't get used until a call is started
 var pc = new RTCPeerConnection(rtc_config);
 
+// RTC Data Channel events
+// Data Channel placeholder
+var dc = null;
+// Function to register event listeners
+function addDataChannelEventListeners(datachannel) {
+  datachannel.onmessage = function(e) {
+    console.log('recieved: ' + e.data);
+  };
+  datachannel.onopen = function() {
+    console.log("Data channel 'text chat' open");
+  };
+  datachannel.onclose = function() {
+    console.log("Data channel 'text chat' closed");
+  };
+}
+// Polite peer will create the data channel...
+pc.onconnectionstatechange = function(e) {
+  if (pc.connectionState == 'connected') {
+    console.log('*** The RTCPeerConnection has been established ***');
+    // Let the polite client open the data channel
+    if (clientIs.polite) {
+      dc = pc.createDataChannel('text chat');
+      addDataChannelEventListeners(dc);
+    }
+  }
+}
+// ...other peer will listen for the channel to open.
+// Note that the `datachannel` event is NOT dispatched
+// on the peer that is opening it, otherwise this would
+// cause bad things to happen
+// See https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/datachannel_event
+pc.ondatachannel = function(e) {
+  console.log('Heard data channel open');
+  dc = e.channel;
+  addDataChannelEventListeners(dc);
+};
+
 // Media objects and constrants
 // audio disabled to avoid classroom demo feedback
 var constraints = { audio: false, video: true };
