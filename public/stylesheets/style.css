@@ -17,6 +17,7 @@ h1 {
   font-weight: bold;
 }
 
+input,
 button {
   font-size: inherit;
   line-height: inherit;
@@ -26,10 +27,65 @@ button {
   border: 1px solid #DDD;
   border-radius: 5px;
 }
+input {
+  background-color: inherit;
+}
+button:disabled {
+  color: #CCC;
+}
 #answer {
   background-color: green;
   color: #EEE;
 }
+
+#chat-form {
+  display: flex;
+}
+#chat-form > input {
+  outline: none;
+}
+#chat-form > input:focus {
+  border-color: #A5F;
+}
+#chat-form > button {
+  width: 5%;
+  margin-left: 5px;
+}
+#chat-form > * {
+  flex: 1 1 auto;
+}
+
+aside.chat {
+  height: 15vh;
+  overflow: scroll;
+  border: 1px solid #DDD;
+  margin-bottom: 5px;
+}
+aside.chat ul {
+  display: flex;
+  flex-flow: column wrap;
+  padding: 6px;
+}
+aside.chat li {
+  display: table;
+  box-sizing: border-box;
+  margin-bottom: 6px;
+  padding: 6px;
+  background-color: #CCC;
+  border-radius: 6px;
+  flex: 0 1 auto;
+  max-width: 70%;
+  min-width: 0;
+}
+aside.chat .peer {
+  align-self: flex-start;
+}
+aside.chat .self {
+  background-color: #A5F;
+  color: #FFF;
+  align-self: flex-end;
+}
+
 
 #header,
 #app {
