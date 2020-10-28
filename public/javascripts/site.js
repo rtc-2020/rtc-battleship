@@ -59,11 +59,14 @@ function startCall() {
   clientIs.polite = true;
   sc.emit('calling');
   startStream();
+  negotiateConnection();
 }
 
 // Handle the 'calling' event on the receiving peer (the callee)
 sc.on('calling', function() {
   console.log('This is the receiving side of the connection...');
+  negotiateConnection();
+
   callButton.innerText = "Answer Call";
   callButton.id = "answer-button";
   callButton.removeEventListener('click', startCall);
@@ -72,3 +75,61 @@ sc.on('calling', function() {
     startStream();
   });
 });
+
+/*
+  THE MAIN MONKEY BUSINESS:
+  Setting up the peer connection.
+*/
+
+async function negotiateConnection() {
+  pc.onnegotiationneeded = async function() {
+    try {
+      console.log('Making an offer...');
+      clientIs.makingOffer = true;
+      await pc.setLocalDescription();
+      sc.emit('signal', { description: pc.localDescription });
+    } catch(error) {
+        console.error(error);
+    } finally {
+        clientIs.makingOffer = false;
+    }
+  }
+}
+
+sc.on('signal', async function({ candidate, description }) {
+  try {
+    if (description) {
+      console.log('Received a decription...');
+      var offerCollision  = (description.type == 'offer') &&
+                            (clientIs.makingOffer || pc.signalingState != 'stable')
+      clientIs.ignoringOffer = !clientIs.polite && offerCollision;
+
+      if (clientIs.ignoringOffer) {
+        return; // Just leave if we're ignoring offers
+      }
+
+      // Set the remote description...
+      await pc.setRemoteDescription(description);
+
+      // ...if it's an offer, we need to answer it:
+      if (description.type == 'offer') {
+        console.log('Specifically, an offer description...');
+        await pc.setLocalDescription();
+        sc.emit('signal', { description: pc.localDescription });
+      }
+
+    } else if (candidate) {
+        console.log('Received a candidate:');
+        console.log(candidate);
+        await pc.addIceCandidate(candidate);
+    }
+  } catch(error) {
+    console.error(error);
+  }
+
+});
+
+// Logic to send candidate
+pc.onicecandidate = function({candidate}) {
+  sc.emit('signal', { candidate: candidate });
+}
