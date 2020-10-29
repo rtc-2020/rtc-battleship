@@ -110,7 +110,7 @@ async function negotiateConnection() {
 sc.on('signal', async function({ candidate, description }) {
   try {
     if (description) {
-      console.log('Received a decription...');
+      console.log('Received a decription...\n', description);
       var offerCollision  = (description.type == 'offer') &&
                             (clientIs.makingOffer || pc.signalingState != 'stable')
       clientIs.ignoringOffer = !clientIs.polite && offerCollision;
@@ -128,6 +128,8 @@ sc.on('signal', async function({ candidate, description }) {
           try {
             // Very latest browsers are totally cool with an
             // argument-less call to setLocalDescription:
+            console.log('Trying to set the local description the modern way...');
+            console.log('The current signaling state is:, ', pc.signalingState);
             await pc.setLocalDescription();
           } catch(error) {
             // Older (and not even all that old) browsers
@@ -136,6 +138,7 @@ sc.on('signal', async function({ candidate, description }) {
             var answer = await pc.createAnswer();
             await pc.setLocalDescription(new RTCSessionDescription(answer));
           } finally {
+            console.log('Local description:\n', pc.localDescription);
             sc.emit('signal', { description: pc.localDescription });
           }
       }
