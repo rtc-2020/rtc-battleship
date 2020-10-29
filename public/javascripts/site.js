@@ -66,7 +66,6 @@ function startCall() {
 sc.on('calling', function() {
   console.log('This is the receiving side of the connection...');
   negotiateConnection();
-
   callButton.innerText = "Answer Call";
   callButton.id = "answer-button";
   callButton.removeEventListener('click', startCall);
@@ -95,7 +94,7 @@ async function negotiateConnection() {
         // are NOT cool. So because we're making an
         // offer, we need to prepare an offer:
         var offer = await pc.createOffer();
-        await pc.setLocalDescription(new RTCSessionDescription(offer));
+        await pc.setLocalDescription(offer);
       } finally {
         sc.emit('signal', { description: pc.localDescription });
       }
@@ -135,8 +134,13 @@ sc.on('signal', async function({ candidate, description }) {
             // Older (and not even all that old) browsers
             // are NOT cool. So because we're handling an
             // offer, we need to prepare an answer:
-            var answer = await pc.createAnswer();
-            await pc.setLocalDescription(new RTCSessionDescription(answer));
+            console.log('Falling back to the old setLocal way because of error:\n', error);
+            if (pc.signalingState == 'have-remote-offer') {
+              var offer = await pc.createAnswer();
+            } else {
+              var offer = await pc.createOffer();
+            }
+            await pc.setLocalDescription(offer);
           } finally {
             console.log('Local description:\n', pc.localDescription);
             sc.emit('signal', { description: pc.localDescription });
