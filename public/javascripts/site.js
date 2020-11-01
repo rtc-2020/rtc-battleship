@@ -34,11 +34,9 @@ async function startStream() {
     var stream = await navigator.mediaDevices.getUserMedia(media_constraints);
     for (var track of stream.getTracks()) {
       pc.addTrack(track);
-      // Future improvement (I think)
-      // selfStream.addTrack(track);
+      // Work with tracks instead of streams on self video
+      selfStream.addTrack(track);
     }
-    // TODO: Use the tracks here
-    selfVideo.srcObject = stream;
   } catch(error) {
     console.error(error);
   }
