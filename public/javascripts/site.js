@@ -97,6 +97,7 @@ async function negotiateConnection() {
         var offer = await pc.createOffer();
         await pc.setLocalDescription(new RTCSessionDescription(offer));
       } finally {
+        console.log('Sending an offer:\n', pc.localDescription);
         sc.emit('signal', { description: pc.localDescription });
       }
     } catch(error) {
@@ -110,7 +111,7 @@ async function negotiateConnection() {
 sc.on('signal', async function({ candidate, description }) {
   try {
     if (description) {
-      console.log('Received a decription...');
+      console.log('Received a decription:\n', description);
       var offerCollision  = (description.type == 'offer') &&
                             (clientIs.makingOffer || pc.signalingState != 'stable')
       clientIs.ignoringOffer = !clientIs.polite && offerCollision;
@@ -136,6 +137,7 @@ sc.on('signal', async function({ candidate, description }) {
             var answer = await pc.createAnswer();
             await pc.setLocalDescription(new RTCSessionDescription(answer));
           } finally {
+            console.log('Sending a response:\n', pc.localDescription);
             sc.emit('signal', { description: pc.localDescription });
           }
       }
@@ -157,5 +159,6 @@ sc.on('signal', async function({ candidate, description }) {
 
 // Logic to send candidate
 pc.onicecandidate = function({candidate}) {
+  console.log('Sending a candidate:\n', candidate);
   sc.emit('signal', { candidate: candidate });
 }
