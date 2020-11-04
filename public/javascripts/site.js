@@ -65,6 +65,7 @@ function addDataChannelEventListeners(datachannel) {
 // Once the RTCPeerConnection has reached a 'connected'
 // state, the polite peer will open the data channel:
 pc.onconnectionstatechange = function(e) {
+  console.log('Connection state:\n', pc.connectionState);
   if (pc.connectionState == 'connected') {
     if (clientIs.polite) {
       console.log('Creating a data channel on the initiating side...');
