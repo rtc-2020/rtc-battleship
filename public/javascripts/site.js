@@ -40,6 +40,49 @@ function appendMsgToChatLog(log,msg,who) {
     chatBox.scrollTop = chatBox.scrollHeight;
   }
 }
+
+function addDataChannelEventListeners(datachannel) {
+  datachannel.onmessage = function(e) {
+    appendMsgToChatLog(chatLog,e.data,'peer');
+  }
+  datachannel.onopen = function() {
+    chatButton.disabled = false; // enable the chat send button
+    chatInput.disabled = false; // enable the chat input box
+  }
+  datachannel.onclose = function() {
+    chatButton.disabled = true; // disable the chat send button
+    chatInput.disabled = true; // disable the chat input box
+  }
+  chatForm.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var msg = chatInput.value;
+    appendMsgToChatLog(chatLog,msg,'self');
+    datachannel.send(msg);
+    chatInput.value = '';
+  });
+}
+
+// Once the RTCPeerConnection has reached a 'connected'
+// state, the polite peer will open the data channel:
+pc.onconnectionstatechange = function(e) {
+  if (pc.connectionState == 'connected') {
+    if (clientIs.polite) {
+      console.log('Creating a data channel on the initiating side...');
+      dc = pc.createDataChannel('text chat');
+      addDataChannelEventListeners(dc);
+    }
+  }
+};
+// ...this will ONLY fire on the receiving end of the
+// data channel connection.
+// See https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/datachannel_event
+// Listen for the data channel on the peer connection
+pc.ondatachannel = function(e) {
+  console.log('Heard data channel open...');
+  dc = e.channel;
+  addDataChannelEventListeners(dc);
+};
+
 // Let's handle video streams...
 // Set up simple media_constraints
 // (disable audio for classroom demo purposes)
