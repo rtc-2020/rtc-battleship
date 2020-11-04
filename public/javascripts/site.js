@@ -15,6 +15,31 @@ var clientIs = {
 var rtc_config = null;
 var pc = new RTCPeerConnection(rtc_config);
 
+// Set placeholder for the data channel...
+var dc = null;
+
+// Add DataChannel-backed DOM elements for chat
+var chatBox = document.querySelector('aside.chat');
+var chatLog = document.querySelector('#chat-log');
+var chatForm = document.querySelector('#chat-form');
+var chatInput = document.querySelector('#message');
+var chatButton = document.querySelector('#send-button');
+
+function appendMsgToChatLog(log,msg,who) {
+  var li = document.createElement('li');
+  var msg = document.createTextNode(msg);
+  li.className = who;
+  li.appendChild(msg);
+  log.appendChild(li);
+  if (chatBox.scrollTo) {
+    chatBox.scrollTo({
+      top: chatBox.scrollHeight,
+      behavior: 'smooth'
+    });
+  } else {
+    chatBox.scrollTop = chatBox.scrollHeight;
+  }
+}
 // Let's handle video streams...
 // Set up simple media_constraints
 // (disable audio for classroom demo purposes)
