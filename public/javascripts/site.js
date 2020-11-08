@@ -11,8 +11,14 @@ var clientIs = {
   polite: false
 }
 
-// Eventually, we will set up STUN servers here
-var rtc_config = null;
+// Trying Mozilla's public STUN server stun.services.mozilla.org
+var rtc_config = {
+  iceServers: [
+    {
+      urls: 'stun:stun.services.mozilla.org'
+    }
+  ]
+};
 var pc = new RTCPeerConnection(rtc_config);
 
 // Set placeholder for the data channel...
