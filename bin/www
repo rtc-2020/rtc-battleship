@@ -38,7 +38,7 @@ if (process.env.LOCALHOST_SSL_KEY && process.env.LOCALHOST_SSL_CERT) {
  * Get port from environment and store in Express.
  */
 
-const port = normalizePort(process.env.PORT || '3000');
+const port = normalizePort(process.env.RTC_DEMO_PORT || '3000');
 app.set('port', port);
 
 /**
