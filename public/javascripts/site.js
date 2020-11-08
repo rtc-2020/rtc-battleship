@@ -66,6 +66,9 @@ function addDataChannelEventListeners(datachannel) {
 // state, the polite peer will open the data channel:
 pc.onconnectionstatechange = function(e) {
   console.log('Connection state:\n', pc.connectionState);
+  // You ABSOLUTELY MUST have adapter.js wired up for this to work
+  // at least on certain, non-compliant browsers. Have a look at
+  // https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/connectionState#Browser_compatibility
   if (pc.connectionState == 'connected') {
     if (clientIs.polite) {
       console.log('Creating a data channel on the initiating side...');
