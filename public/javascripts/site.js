@@ -15,7 +15,7 @@ var clientIs = {
 var rtc_config = {
   iceServers: [
     {
-      urls: 'stun:stun.services.mozilla.org'
+      urls: ['stun:stun.l.google.com:19302','stun:stun1.l.google.com:19302']
     }
   ]
 };
