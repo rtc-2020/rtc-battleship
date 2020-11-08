@@ -49,7 +49,7 @@ button:disabled {
 }
 #chat-form > button {
   width: 5%;
-  margin-left: 5px;
+  margin-left: 6px;
 }
 #chat-form > * {
   flex: 1 1 auto;
@@ -61,7 +61,7 @@ aside.chat {
 ul#chat-log {
   height: 15vh;
   overflow: scroll;
-  margin-bottom: 5px;
+  margin-bottom: 6px;
   display: flex;
   flex-flow: column nowrap;
   padding: 6px;
@@ -71,7 +71,6 @@ ul#chat-log li {
   padding: 6px;
   background-color: #CCC;
   border-radius: 6px;
-  flex: 1 0 min-content;
   max-width: 60%;
 }
 ul#chat-log li.peer {
