@@ -95,7 +95,7 @@ pc.ondatachannel = function(e) {
 // Let's handle video streams...
 // Set up simple media_constraints
 // (disable audio for classroom demo purposes)
-var media_constraints = { video: true, audio: false };
+var media_constraints = { video: true, audio: true };
 // Handle self video
 var selfVideo = document.querySelector('#self-video');
 var selfStream = new MediaStream();
