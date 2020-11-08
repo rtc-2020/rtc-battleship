@@ -19,7 +19,6 @@ var pc = new RTCPeerConnection(rtc_config);
 var dc = null;
 
 // Add DataChannel-backed DOM elements for chat
-var chatBox = document.querySelector('aside.chat');
 var chatLog = document.querySelector('#chat-log');
 var chatForm = document.querySelector('#chat-form');
 var chatInput = document.querySelector('#message');
@@ -31,13 +30,13 @@ function appendMsgToChatLog(log,msg,who) {
   li.className = who;
   li.appendChild(msg);
   log.appendChild(li);
-  if (chatBox.scrollTo) {
-    chatBox.scrollTo({
-      top: chatBox.scrollHeight,
+  if (chatLog.scrollTo) {
+    chatLog.scrollTo({
+      top: chatLog.scrollHeight,
       behavior: 'smooth'
     });
   } else {
-    chatBox.scrollTop = chatBox.scrollHeight;
+    chatLog.scrollTop = chatLog.scrollHeight;
   }
 }
 
