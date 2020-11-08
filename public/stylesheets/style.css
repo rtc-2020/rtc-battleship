@@ -58,32 +58,29 @@ button:disabled {
 aside.chat {
 
 }
-aside.chat ul {
+ul#chat-log {
   height: 15vh;
   overflow: scroll;
   margin-bottom: 5px;
   display: flex;
-  flex-flow: column wrap;
+  flex-flow: column nowrap;
   padding: 6px;
 }
-aside.chat li {
-  display: table;
-  box-sizing: border-box;
+ul#chat-log li {
   margin-bottom: 6px;
   padding: 6px;
   background-color: #CCC;
   border-radius: 6px;
-  flex: 0 1 auto;
-  max-width: 70%;
-  min-width: 0;
+  flex: 1 0 min-content;
+  max-width: 60%;
 }
-aside.chat .peer {
-  align-self: flex-start;
+ul#chat-log li.peer {
+  margin-right: auto;
 }
-aside.chat .self {
+ul#chat-log li.self {
+  margin-left: auto;
   background-color: #A5F;
   color: #FFF;
-  align-self: flex-end;
 }
 
 
