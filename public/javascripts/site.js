@@ -207,7 +207,9 @@ sc.on('signal', async function({ candidate, description }) {
       // Set the remote description...
       try {
         console.log('Trying to set a remote description:\n', description);
+        clientIs.settingRemoteAnswerPending = description.type == "answer";
         await pc.setRemoteDescription(description);
+        clientIs.settingRemoteAnswerPending = false;
       } catch(error) {
         console.error('Error from setting local description', error);
       }
