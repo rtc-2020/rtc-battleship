@@ -8,7 +8,8 @@ sc.on('message', function(data) {
 var clientIs = {
   makingOffer: false,
   ignoringOffer: false,
-  polite: false
+  polite: false,
+  settingRemoteAnswerPending: false
 }
 
 // Eventually, we will set up STUN servers here
@@ -183,9 +184,20 @@ async function negotiateConnection() {
 sc.on('signal', async function({ candidate, description }) {
   try {
     if (description) {
+      /*
       console.log('Received a decription:\n', description);
       var offerCollision  = (description.type == 'offer') &&
                             (clientIs.makingOffer || pc.signalingState != 'stable')
+      clientIs.ignoringOffer = !clientIs.polite && offerCollision;
+      */
+      // W3C/WebRTC Specification Perfect Negotiation Pattern:
+      // https://w3c.github.io/webrtc-pc/#example-18
+      var readyForOffer =
+            !clientIs.makingOffer &&
+            (pc.signalingState == "stable" || clientIs.settingRemoteAnswerPending);
+
+      var offerCollision = description.type == "answer" && !readyForOffer;
+
       clientIs.ignoringOffer = !clientIs.polite && offerCollision;
 
       if (clientIs.ignoringOffer) {
