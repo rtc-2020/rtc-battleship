@@ -247,8 +247,14 @@ sc.on('signal', async function({ candidate, description }) {
         console.log(candidate);
         // Save Safari and other browsers that can't handle an
         // empty string for the `candidate.candidate` value:
-        if (candidate.candidate.length > 1) {
-          await pc.addIceCandidate(candidate);
+        try {
+          if (candidate.candidate.length > 1) {
+            await pc.addIceCandidate(candidate);
+          }
+        } catch(error) {
+          if (!clientIs.ignoringOffer) {
+            throw error;
+          }
         }
     }
   } catch(error) {
