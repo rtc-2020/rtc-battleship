@@ -15,8 +15,9 @@ var clientIs = {
 var rtc_config = null;
 var pc = new RTCPeerConnection(rtc_config);
 
-// Set placeholder for the data channel...
-var dc = null;
+// Set placeholder for the data channels...
+var dc = null; // TODO: rename and re-reference as `cdc` (Chat Data Channel)
+var gdc = null; // Game Data Channel
 
 // Add DataChannel-backed DOM elements for chat
 var chatLog = document.querySelector('#chat-log');
@@ -72,7 +73,9 @@ pc.onconnectionstatechange = function(e) {
     if (clientIs.polite) {
       console.log('Creating a data channel on the initiating side...');
       dc = pc.createDataChannel('text chat');
-      addDataChannelEventListeners(dc);
+      gdc = pc.createDataChannel('game data');
+      addDataChannelEventListeners(dc); // chat only; need separate game events
+      var g = new Battleship('.ocean','.targeting',gdc);
     }
   }
 };
@@ -81,12 +84,18 @@ pc.onconnectionstatechange = function(e) {
 // See https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/datachannel_event
 // Listen for the data channel on the peer connection
 pc.ondatachannel = function(e) {
-  console.log('Heard data channel open...');
+  console.log('Heard data channel open:',e.channel.label);
   // Data channels can be distinguished by e.channel.label
   // which would be `text chat` in this case. Use that to
   // decide what to do with the channel that has opened
-  dc = e.channel;
-  addDataChannelEventListeners(dc);
+  if (e.channel.label == 'text chat') {
+    dc = e.channel;
+    addDataChannelEventListeners(dc);
+  }
+  if (e.channel.label == 'game data') {
+    gdc = e.channel;
+    var g = new Battleship('.ocean','.targeting',gdc);
+  }
 };
 
 // Let's handle video streams...
@@ -254,7 +263,7 @@ pc.onicecandidate = function({candidate}) {
 
 /* Battleship Game JS */
 
-function Battleship(ocean,targeting) {
+function Battleship(ocean,targeting,gdc) {
 
   // Set up our basic grids
   var ocean = document.querySelector(ocean);
