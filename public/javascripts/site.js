@@ -452,10 +452,23 @@ function Battleship(ocean,targeting,gdc) {
     }
     targeted.push(coordinates);
     targeted.sort();
+    /*
     var event = new CustomEvent('fire', { detail: { action: 'fire', coordinates: coordinates } });
     console.log("Clicked on coordinates", );
     ocean.dispatchEvent(event);
+    */
+    // Send the fire event over the datachannel
+    // YOU CANNOT SEND JAVASCRIPT OBJECTS OVER THE DATA CHANNEL!
+    // They must be stringified into JSON...
+    gdc.send(JSON.stringify({ action: 'fire', coordinates: coordinates }));
+    // TODO: Make it so a player cannot fire until it's their turn again
   });
+
+  gdc.onmessage = function(e) {
+    // ...and then the JSON must be parsed on the receiving side.
+    var data = JSON.parse(e.data);
+    console.log(`Heard this action: ${data.action}`);
+  };
   // Ocean listens for 'fire' events
   ocean.addEventListener('fire', function(e) {
     var coordinates = e.detail.coordinates;
@@ -489,5 +502,3 @@ function Battleship(ocean,targeting,gdc) {
   });
 
 };
-
-var g = new Battleship('.ocean','.targeting');
