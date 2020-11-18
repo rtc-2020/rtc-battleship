@@ -82,6 +82,9 @@ pc.onconnectionstatechange = function(e) {
 // Listen for the data channel on the peer connection
 pc.ondatachannel = function(e) {
   console.log('Heard data channel open...');
+  // Data channels can be distinguished by e.channel.label
+  // which would be `text chat` in this case. Use that to
+  // decide what to do with the channel that has opened
   dc = e.channel;
   addDataChannelEventListeners(dc);
 };
