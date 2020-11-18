@@ -468,6 +468,39 @@ function Battleship(ocean,targeting,gdc) {
     // ...and then the JSON must be parsed on the receiving side.
     var data = JSON.parse(e.data);
     console.log(`Heard this action: ${data.action}`);
+    if (data.action == 'fire') {
+      var coordinates = data.coordinates;
+      var result = 'miss';
+      var message = 'Miss.'
+      console.log('Heard a fire event at coordinates', coordinates);
+      // Display the hit or miss on the ocean
+      var li = document.createElement('li');
+      if (targets.indexOf(coordinates) !== -1) {
+        result = 'hit';
+        // If there's a hit, we need to track the damage and get the damage message
+        message = track_damage(ships,coordinates);
+      }
+      li.className = result;
+      li.dataset.coordinates = coordinates;
+      ocean.appendChild(li);
+      /*
+      var event = new CustomEvent('report', { detail: { action: result, coordinates: coordinates, message: message } });
+      targeting.dispatchEvent(event);
+      */
+      gdc.send(JSON.stringify({ action: result, coordinates: coordinates, message: message }));
+
+    }
+    if (data.action == 'hit' || data.action == 'miss') {
+      var result = data.action;
+      var coordinates = data.coordinates;
+      var message = data.message;
+      var li = document.createElement('li');
+      li.className = result;
+      li.dataset.coordinates = coordinates;
+      targeting.appendChild(li);
+      // TODO: Add some kind of message console to the game board.
+      document.querySelector('#targeting-console').innerText = message;
+    }
   };
   // Ocean listens for 'fire' events
   ocean.addEventListener('fire', function(e) {
