@@ -75,7 +75,7 @@ pc.onconnectionstatechange = function(e) {
       dc = pc.createDataChannel('text chat');
       gdc = pc.createDataChannel('game data');
       addDataChannelEventListeners(dc); // chat only; need separate game events
-      var g = new Battleship('.ocean','.targeting',gdc);
+      var g = new Battleship('.ocean','.targeting',gdc,false);
     }
   }
 };
@@ -94,7 +94,7 @@ pc.ondatachannel = function(e) {
   }
   if (e.channel.label == 'game data') {
     gdc = e.channel;
-    var g = new Battleship('.ocean','.targeting',gdc);
+    var g = new Battleship('.ocean','.targeting',gdc,true);
   }
 };
 
@@ -263,11 +263,16 @@ pc.onicecandidate = function({candidate}) {
 
 /* Battleship Game JS */
 
-function Battleship(ocean,targeting,gdc) {
+function Battleship(ocean,targeting,gdc,firesFirst) {
 
   // Set up our basic grids
   var ocean = document.querySelector(ocean);
   var targeting = document.querySelector(targeting);
+
+  // Hold onto game-play state
+  var player = {
+    canFire: firesFirst
+  };
 
   // Set up a record of each ship and its position coordinates, a-i on the x; 0-9 on the y
   // Using the 1990 MB ship namees and sizes
@@ -447,9 +452,11 @@ function Battleship(ocean,targeting,gdc) {
   targeting.addEventListener('click', function(e) {
     var coordinates = e.target.dataset.coordinates;
     // Don't do anything if the coordinates have already been targeted, or if the gap was clicked on
-    if (targeted.indexOf(coordinates) !== -1 || coordinates === undefined) {
+    if (targeted.indexOf(coordinates) !== -1 || coordinates === undefined || !player.canFire) {
       return;
     }
+    // Make it so a player cannot fire until it's their turn again
+    player.canFire = false;
     targeted.push(coordinates);
     targeted.sort();
     /*
@@ -461,7 +468,6 @@ function Battleship(ocean,targeting,gdc) {
     // YOU CANNOT SEND JAVASCRIPT OBJECTS OVER THE DATA CHANNEL!
     // They must be stringified into JSON...
     gdc.send(JSON.stringify({ action: 'fire', coordinates: coordinates }));
-    // TODO: Make it so a player cannot fire until it's their turn again
   });
 
   gdc.onmessage = function(e) {
@@ -488,7 +494,8 @@ function Battleship(ocean,targeting,gdc) {
       targeting.dispatchEvent(event);
       */
       gdc.send(JSON.stringify({ action: result, coordinates: coordinates, message: message }));
-
+      player.canFire = true;
+      document.querySelector('#targeting-console').innerText = "Your move.";
     }
     if (data.action == 'hit' || data.action == 'miss') {
       var result = data.action;
