@@ -112,3 +112,152 @@ video {
   top: 12px;
   right: 12px;
 }
+
+/* Battleship CSS */
+#game-board ol {
+  display: grid;
+  grid-template-columns: repeat(10,1fr);
+  grid-template-rows: repeat(10,1fr);
+  grid-gap: 2px;
+}
+#game-board {
+  background: #DDD;
+}
+.ocean {
+  padding-top: 3vw;
+}
+.targeting > li {
+  background-color: #0C0;
+  padding-top: 100%; /* Hack to get fully responsive squares */
+}
+.ocean > li {
+  background-color: #06F;
+  z-index: 0;
+  padding-top: 100%;
+}
+#targeting-console {
+  font-family: Monaco, "Courier New", Courier, monospace;
+  margin-top: 2px;
+  padding: 3px;
+  font-weight: bold;
+  background: #050;
+  color: #EEE;
+  display: inline-block;
+}
+#targeting-console::before {
+  content: "> "
+}
+/*
+  To have ships overlap ocean, it looks
+  like it's necessary to explicitly place
+  each list item on the grid; otherwise,
+  the ships bump them out of the way.
+*/
+li[data-coordinates^="a"] {
+  grid-row-start: 1;
+}
+li[data-coordinates^="b"] {
+  grid-row-start: 2;
+}
+li[data-coordinates^="c"] {
+  grid-row-start: 3;
+}
+li[data-coordinates^="d"] {
+  grid-row-start: 4;
+}
+li[data-coordinates^="e"] {
+  grid-row-start: 5;
+}
+li[data-coordinates^="f"] {
+  grid-row-start: 6;
+}
+li[data-coordinates^="g"] {
+  grid-row-start: 7;
+}
+li[data-coordinates^="h"] {
+  grid-row-start: 8;
+}
+li[data-coordinates^="i"] {
+  grid-row-start: 9;
+}
+li[data-coordinates^="j"] {
+  grid-row-start: 10;
+}
+li[data-coordinates$="0"] {
+  grid-column-start: 1;
+}
+li[data-coordinates$="1"] {
+  grid-column-start: 2;
+}
+li[data-coordinates$="2"] {
+  grid-column-start: 3;
+}
+li[data-coordinates$="3"] {
+  grid-column-start: 4;
+}
+li[data-coordinates$="4"] {
+  grid-column-start: 5;
+}
+li[data-coordinates$="5"] {
+  grid-column-start: 6;
+}
+li[data-coordinates$="6"] {
+  grid-column-start: 7;
+}
+li[data-coordinates$="7"] {
+  grid-column-start: 8;
+}
+li[data-coordinates$="8"] {
+  grid-column-start: 9;
+}
+li[data-coordinates$="9"] {
+  grid-column-start: 10;
+}
+li.miss,
+li.hit {
+  z-index: 10;
+  border-radius: 100%;
+  margin: .7vw;
+  background-color: white;
+  padding-top: 0;
+}
+li.hit {
+  background-color: red;
+}
+
+li[class^="ship-"] {
+  background-color: #777;
+  border: .5vw solid #444;
+  z-index: 2;
+  padding-top: 0;
+}
+
+/* Make our boats boat-shaped! */
+.v {
+  border-top-left-radius: 80%;
+  border-bottom-left-radius: 80%;
+  border-top-right-radius: 30%;
+  border-bottom-right-radius: 30%;
+}
+
+.h {
+  border-bottom-left-radius: 80%;
+  border-bottom-right-radius: 80%;
+  border-top-right-radius: 30%;
+  border-top-left-radius: 30%;
+}
+
+/* Change up the bow/stern when there are adjacent orientations in the markup */
+.v + .v {
+  border-top-right-radius: 80%;
+  border-bottom-right-radius: 80%;
+  border-top-left-radius: 30%;
+  border-bottom-left-radius: 30%;
+}
+
+.h + .h {
+  border-top-left-radius: 80%;
+  border-top-right-radius: 80%;
+  border-bottom-right-radius: 30%;
+  border-bottom-left-radius: 30%;
+}
