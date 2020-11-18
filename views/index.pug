@@ -41,6 +41,22 @@ block content
             type="submit"
           ) Send
 
+      article#game-board
+        h2 Battleship
+        ol.targeting
+          each val in ['a','b','c','d','e','f','g','h','i']
+            - var n = 0;
+            while n < 10
+              li(data-coordinates=val + n)
+              - n++
+        pre#targeting-console
+        ol.ocean
+          each val in ['a','b','c','d','e','f','g','h','i']
+            - var n = 0;
+            while n < 10
+              li(data-coordinates=val + n)
+              - n++
+
 
   script.
     window.NAMESPACE = "#{namespace}";
